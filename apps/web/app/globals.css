@@ -4,6 +4,42 @@
 @tailwind utilities;
 
 body {
+  overflow: hidden;
   min-width: 100%;
   font-family: 'Patrick Hand', cursive;
+}
+
+@keyframes tada {
+  from {
+    transform: scale3d(1, 1, 1);
+  }
+
+  10%, 20% {
+    transform: scale3d(0.9, 0.9, 0.9) rotate3d(0, 0, 1, -1deg);
+  }
+
+  30%, 50%, 70%, 90% {
+    transform: scale3d(1.05, 1.05, 1.05) rotate3d(0, 0, 1, 1deg);
+  }
+
+  40%, 60%, 80% {
+    transform: scale3d(1.05, 1.05, 1.05) rotate3d(0, 0, 1, -1deg);
+  }
+
+  to {
+    transform: scale3d(1, 1, 1);
+  }
+}
+
+.animate-tada {
+  animation: tada 0.3s ease-in-out;
+  border: red solid 4px;
+}
+
+.animate-tada:focus {
+  border: red solid 4px;
+}
+
+.successed {
+  border: green solid 4px;
 }
