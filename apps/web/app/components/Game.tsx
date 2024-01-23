@@ -12,6 +12,10 @@ import { toggleTadaAnimation } from "../utils/toggleTadaAnimation";
 import { getRandomWord } from "../utils/getRandomNumber";
 import { formatTime } from "../utils/formatCountdown";
 
+interface GameProps {
+  onHomeClick: () => void;
+}
+
 const words = data
   .filter((item) => item.vietnamese.split(" ").length === 2)
   .map((item) => item.vietnamese);
@@ -20,7 +24,7 @@ const defaultSkip = 3;
 const defaultTime = 90;
 const defaultPoint = 0;
 
-export default function Game(): JSX.Element {
+export const Game: React.FC<GameProps> = ({ onHomeClick }) => {
   const [answer, setAnswer] = useState("");
   const [listAnswer, setListAnswer] = useState<string[]>([]);
   const [randomWord, setRandomWord] = useState("");
@@ -30,10 +34,20 @@ export default function Game(): JSX.Element {
   const [checkStatus, setCheckStatus] = useState("default");
   const [icon, setIcon] = useState(<SendHorizontal size={36} />);
   const [time, setTime] = useState(defaultTime);
-  
+  const [isModalOpen, setModalOpen] = useState(false);
   const resultRef = useRef<HTMLInputElement>(null);
 
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
+  const handleReplay = () => {
+    handleReset()
+    newWord()
+  }
+
   const handleReset = () => {
+    setModalOpen(false);
     setResult("");
     setPoint(defaultPoint);
     setSkip(defaultSkip);
@@ -63,6 +77,10 @@ export default function Game(): JSX.Element {
   };
 
   const handleSubmit = () => {
+    if (time <= 0) {
+      return;
+    }
+
     if (result.toLocaleLowerCase() === answer.toLocaleLowerCase()) {
       setPoint((prev) => prev + 1);
       setCheckStatus("success");
@@ -75,6 +93,7 @@ export default function Game(): JSX.Element {
   };
 
   useEffect(() => {
+    handleReset();
     newWord();
   }, []);
 
@@ -87,6 +106,9 @@ export default function Game(): JSX.Element {
       }
     }, 1000);
 
+    if (time === 0) {
+      setModalOpen(true);
+    }
     // Clear the interval when the component unmounts
     return () => clearInterval(timer);
   }, [time]);
@@ -112,7 +134,7 @@ export default function Game(): JSX.Element {
         <div id="home">
           <Home
             size={48}
-            onClick={() => handleReset()}
+            onClick={() => onHomeClick()}
             className="cursor-pointer"
           />
         </div>
@@ -181,6 +203,42 @@ export default function Game(): JSX.Element {
           {icon}
         </button>
       </div>
+
+      {/* // Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-8 rounded">
+            <span
+              className="text-gray-700 text-2xl font-bold cursor-pointer absolute top-2 right-2"
+              onClick={closeModal}
+            >
+              &times;
+            </span>
+            {/* Modal Title */}
+            <div className="modal-title text-center text-3xl font-bold p-4">
+              <h4 className="">Time's Up ⏱️</h4>
+            </div>
+
+            {/* Modal Content */}
+            <div className="modal-content text-center text-2xl font-bold">
+              <p>
+                Chúc mừng, điểm của bạn là: <br />
+                <b className="text-5xl font-primary">{point}</b>
+              </p>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex justify-center mt-4 flex-row">
+              <button
+                className="bg-gradient-to-r from-[#22c1c3] to-[#fdbb2d] text-white py-2 px-4 rounded hover:opacity-90"
+                onClick={() => handleReplay()}
+              >
+                Chơi lại
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-}
+};
