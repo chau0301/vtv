@@ -156,7 +156,7 @@ export const Game: React.FC<GameProps> = ({ onHomeClick }) => {
 
       <div
         id="exam"
-        className="text-white flex flex-col items-center justify-center gap-12 text-7xl font-sans p-12 max-h-12 select-none"
+        className="text-white flex flex-col items-center justify-center gap-12 text-3xl font-sans p-12 max-h-12 select-none tracking-widest md:text-5xl lg:text-7xl"
       >
         {randomWord ? (
           <div>{randomWord}</div>
